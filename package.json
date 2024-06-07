@@ -1,0 +1,6 @@
+{
+  "name": "ffi-rs-test",
+  "devDependencies": {
+    "ffi-rs": "^1.0.78"
+  }
+}
