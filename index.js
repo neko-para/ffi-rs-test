@@ -22,14 +22,14 @@ const func = createPointer({
   paramsValue: [
     () => {
       console.log('begin js callback')
-      load({
+      const ret = load({
         library: 'test',
         funcName: 'simple_add',
         retType: DataType.I32,
         paramsType: [DataType.I32, DataType.I32],
         paramsValue: [1, 2]
       })
-      console.log('end js callback')
+      console.log('end js callback', ret)
       return 123
     }
   ]
@@ -39,13 +39,14 @@ const func_logger = createPointer({
   paramsType: [
     funcConstructor({
       paramsType: [],
-      retType: DataType.Void
+      retType: DataType.I32
     })
   ],
   paramsValue: [
     () => {
       console.log('begin js logger callback')
       console.log('end js logger callback')
+      return 1
     }
   ]
 })
@@ -55,6 +56,6 @@ load({
   funcName: 'call_cb',
   retType: DataType.Void,
   paramsType: [DataType.External, DataType.External],
-  paramsValue: [...unwrapPointer(func), ...unwrapPointer(func_logger)],
-  runInNewThread: true
+  paramsValue: [...unwrapPointer(func), ...unwrapPointer(func_logger)]
+  // runInNewThread: true
 })

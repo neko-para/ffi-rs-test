@@ -9,9 +9,11 @@
 #define EXPORT __attribute__((visibility("default")))
 #endif
 
-static void (*saved_logger)() = nullptr;
+static int (*saved_logger)() = nullptr;
 
-EXPORT extern "C" void call_cb(int (*func)(), void (*logger)()) {
+EXPORT extern "C" void call_cb(int (*func)(), int (*logger)()) {
+  std::cout << "start call_cb" << std::endl;
+  logger();
   saved_logger = logger;
   std::thread([func]() {
     using namespace std::chrono_literals;
@@ -20,11 +22,13 @@ EXPORT extern "C" void call_cb(int (*func)(), void (*logger)()) {
     int ret = func();
     std::cout << std::format("end call callback with {}", ret) << std::endl;
   }).join();
+  std::cout << "end call_cb" << std::endl;
 }
 
 EXPORT extern "C" int simple_add(int a, int b) {
+  int sum = a + b;
   if (saved_logger) {
-    saved_logger();
+    sum += saved_logger();
   }
-  return a + b;
+  return sum;
 }
